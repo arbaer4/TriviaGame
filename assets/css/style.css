@@ -1,0 +1,28 @@
+#content {
+    height: 600px;
+    background: lightcoral;
+    margin-top: 150px;
+    /* align-content: center; */
+}
+
+body {
+    background-image: url ("/assets/images/theoffice.jpg");
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    font-size: 80px;
+}
+
+#start {
+    width: 300px;
+    height: 50px;
+    background: gray;
+    color: white;
+    font-size: 30px;
+    border: solid 3px white;
+    /* text-align: center; */
+    margin-left: 275px;
+    margin-top: 250px;
+}
