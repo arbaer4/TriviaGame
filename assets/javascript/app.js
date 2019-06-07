@@ -11,12 +11,12 @@ $(document).ready(function(){
      {question: "In 'Office Olympics': What does Pam name 'Box of paper snowshoe racing'?",
        answers: ["Flonkerton", "Icelandic Snowshoe Racing", "Pegerhosen", "Bixing"],
        correct: "Flonkerton",
-       image: "<img src='assets/images/officeolympics.jpg'>"
+       image: "<img src='assets/images/officeolympics.webp'>"
      },
      {question: "In 'Diversity Day': What famous comedian's stand up routine does Michael imitate?",
        answers: ["Robin Williams", "Chris Rock", "George Carlin", "Richard Pryor"],
        correct: "Chris Rock",
-       image: "<img src='assets/images/diversityday.jpg'>"
+       image: "<img src='assets/images/diversityday.png'>"
      },
      {question: "In 'Sexual Harassment': What is Todd Packer's vanity license plate?",
        answers: ["LUVMKR", "WLHUNG", "TODPKR", "BGDADY"],
@@ -72,29 +72,33 @@ $(document).ready(function(){
  //Display question with associated answer based on currentQuestion
  function displayQuestion(){
   $("#questiondisplay").append("<p>" + questionList[currentQuestion].question + "</p>");
-  $("#answerdisplay1").html("<button>" + questionList[currentQuestion].answers[0] + "</button>");
-  $("#answerdisplay2").html("<button>" + questionList[currentQuestion].answers[1] + "</button>");
-  $("#answerdisplay3").html("<button>" + questionList[currentQuestion].answers[2] + "</button>");
-  $("#answerdisplay4").html("<button>" + questionList[currentQuestion].answers[3] + "</button>");
+  $("#answerdisplay1").html("<button>" + questionList[currentQuestion].answers[0] + "</button>").attr("data", questionList[currentQuestion].answers[0]);
+  $("#answerdisplay2").html("<button>" + questionList[currentQuestion].answers[1] + "</button>").attr("data", questionList[currentQuestion].answers[1]);
+  $("#answerdisplay3").html("<button>" + questionList[currentQuestion].answers[2] + "</button>").attr("data", questionList[currentQuestion].answers[2]);
+  $("#answerdisplay4").html("<button>" + questionList[currentQuestion].answers[3] + "</button>").attr("data", questionList[currentQuestion].answers[3]);
 
  };
 
+ //function for when user clicks correct answer:  increment correctAnswer score, display correct answer and associated image, increment currentQuestion count, set timeout to 5 seconds before proceeding to next question
  function youWin(){
    $("#questiondisplay").html("<p>That is correct!</p>");
    correctAnswers++;
    console.log(correctAnswers);
    var rightAnswer = questionList[currentQuestion].correct; 
    $("#questiondisplay").append("<p>The answer was:" + rightAnswer + "</p>" + questionList[currentQuestion].image);
+   $(".answerbutton").hide();
    setTimeout(nextQuestion,5000);
    currentQuestion++;
  }
 
  function youLose(){
+   console.log("you lose called");
    $("#questiondisplay").html("<p>That is wrong!<p>");
    incorrectAnswers++;
    console.log(incorrectAnswers);
    var rightAnswer = questionList[currentQuestion].correct; 
    $("#questiondisplay").append("<p>The correct answer is: " + rightAnswer + questionList[currentQuestion].image + "</p>");
+   $(".answerbutton").hide();
    setTimeout(nextQuestion,5000);
    currentQuestion++;
    
@@ -104,15 +108,17 @@ $(document).ready(function(){
  function countDown(){
    //timer 
    clock = setInterval(countDown,1000);
-   function decrement() {
+   function countDown() {
+    timer--;
+    $("#timer").html("<p> Time Remaining: " + timer + " seconds </p>");
+
     if (timer < 1) {
       clearInterval(clock);
       timeUp();
     }
-    if (timer > 0){
-      timer--;
-    $("#timer").html("<p>" + timer + "</p>");
-    }
+    
+     
+   
    }
    }
 
@@ -123,7 +129,9 @@ function timeUp(){
     $("#timer").html("<p> Out of time! </p>");
     unanswered++;
     console.log(unanswered);
-    $("#questiondisplay").append("<p>Correct Answer:" + correctAnswer + questionList[currentQuestion].image + "</p>");
+    $("#questiondisplay").html("<p>Correct Answer:" + correctAnswer + questionList[currentQuestion].image + "</p>");
+    $(".answerbutton").hide();
+    // $("#questiondisplay").empty();
     currentQuestion++;
     setTimeout(nextQuestion, 5000);
   }
@@ -132,8 +140,9 @@ function timeUp(){
 function nextQuestion(){
   if (currentQuestion < questionList.length) {
     timer = 30;
-    $("#questiondisplay").html("<p>" + timer + " seconds remain!</p>");
+    $("#questiondisplay").html("");
     displayQuestion();
+    $(".answerbutton").show();
     countDown();
     timeUp();
   }
@@ -143,7 +152,11 @@ function nextQuestion(){
 }
 
 function resultsDisplay(){
- $("#questiondisplay").html("<p>" + correctAnswers + incorrectAnswers + unanswered + "/<p>");
+  console.log("correct" + correctAnswers);
+  console.log("incorrect" + incorrectAnswers);
+  console.log("unanswered" + unanswered);
+ $("#questiondisplay").html("<p> Correct Answers: " + correctAnswers + "</p> <p> Incorrect Answers: " + incorrectAnswers + "</p>" + "<p> Unanswered Questions: " + unanswered + "</p>");
+ $("#start").show();
 }
 
  //On click of start hide start button, show and start timer, get first question
@@ -157,15 +170,18 @@ function resultsDisplay(){
    });
 
 //answer button
-$(".answerbutton").click(function() {
-  if (correctAnswer) {
+$(".answerbutton").on("click", function() {
+  console.log($(this).attr("data"));
+  console.log(questionList[currentQuestion].correct);
+  if ($(this).attr("data") === questionList[currentQuestion].correct) {
     youWin();
-    nextQuestion();
+    // nextQuestion();
     clearInterval(clock);
+
   }
   else {
     youLose();
-    nextQuestion();
+    // nextQuestion();
     clearInterval(clock);
   }
 });
